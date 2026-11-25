@@ -10,8 +10,8 @@ function usage() {
   return `BarongLock — lock and unlock any file
 
 Usage:
-  baronglock <input-file> [--out <path>]
-  baronglock encrypt <input-file> [--out <path>]
+  baronglock <input-file> [--out <path> | --ext <baronglock|blj>]
+  baronglock encrypt <input-file> [--out <path> | --ext <baronglock|blj>]
   baronglock decrypt <input-file> [--out <path>]
   baronglock key import <key-file>
   baronglock key export <key-id> --out <key-file>
@@ -19,7 +19,9 @@ Usage:
 
 Behavior:
   Any other input        -> encrypt to <name>.baronglock (e.g. notes.txt -> notes.baronglock)
+                            --ext blj gives the short form <name>.blj
   BarongLock input       -> decrypt to stdout (or --out <path>)
+                            .baronglock and .blj files are both recognised by content, not name
   "-"                    -> read stdin; output to stdout unless --out is given
 
 Key store: ${defaultKeyDir()}
@@ -28,13 +30,18 @@ Environment:
 `;
 }
 function parseArgs(args) {
-  const result = { positional: [], out: null, help: false };
+  const result = { positional: [], out: null, ext: null, help: false };
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
     if (a === "--help" || a === "-h") result.help = true;
     else if (a === "--out" || a === "-o") {
       if (!args[i + 1]) throw new Error(`${a} requires a path.`);
       result.out = args[++i];
+    } else if (a === "--ext") {
+      const ext = (args[i + 1] || "").replace(/^\./, "").toLowerCase();
+      if (!LOCKED_EXTENSIONS.includes(ext)) throw new Error(`--ext must be one of: ${LOCKED_EXTENSIONS.join(", ")}.`);
+      result.ext = ext;
+      i++;
     } else if (a.startsWith("-") && a !== "-") throw new Error(`Unknown option: ${a}`);
     else result.positional.push(a);
   }
@@ -51,19 +58,23 @@ async function writeOutput(path, data) {
   await writeFile(path, data, { flag: "wx", mode: 0o600 });
   await chmod(path, 0o600).catch(() => {});
 }
+// Locked files may end in .baronglock (default) or the short .blj. Unlocking
+// never relies on the name: it checks the BARONGLOCK signature in the content.
+const LOCKED_EXTENSIONS = ["baronglock", "blj"];
 // notes.txt -> notes.baronglock (the file's own extension is dropped; folder is kept).
-function lockedName(inputPath) {
+function lockedName(inputPath, ext = "baronglock") {
   const { dir, name } = parse(inputPath);
-  return join(dir, `${name}.baronglock`);
+  return join(dir, `${name}.${ext}`);
 }
 function hasMagic(data) {
   return data.length >= MAGIC.length && data.subarray(0, MAGIC.length).equals(MAGIC);
 }
-async function runFile(inputPath, explicitMode, outputPath) {
+async function runFile(inputPath, explicitMode, outputPath, ext) {
   const input = await readInput(inputPath);
   const isLocked = hasMagic(input);
   const mode = explicitMode || (isLocked ? "decrypt" : "encrypt");
   if (mode === "decrypt") {
+    if (ext) throw new Error("--ext only applies when locking a file. Use --out to name the unlocked file.");
     if (!isLocked) throw new Error("Input does not have the BarongLock signature; refusing to decrypt.");
     const parsed = parseEnvelope(input);
     const keyId = keyIdHex(parsed.keyId);
@@ -79,7 +90,7 @@ async function runFile(inputPath, explicitMode, outputPath) {
     const { envelope, keyId } = encrypt(input, key);
     const id = keyIdHex(keyId);
     const keyFile = await saveKey(id, key);
-    const defaultOut = inputPath === "-" ? "-" : lockedName(inputPath);
+    const defaultOut = inputPath === "-" ? "-" : lockedName(inputPath, ext ?? undefined);
     const out = outputPath ?? defaultOut;
     try {
       await writeOutput(out, envelope);
@@ -117,7 +128,8 @@ async function main() {
     if (p.length !== 1) throw new Error("Provide one input file. Use --help for usage.");
     inputPath = p[0];
   }
-  await runFile(inputPath, mode, args.out);
+  if (args.out && args.ext) throw new Error("Use either --out or --ext, not both.");
+  await runFile(inputPath, mode, args.out, args.ext);
 }
 main().catch((error) => {
   stderr.write(`baronglock: ${error.message}\n`);

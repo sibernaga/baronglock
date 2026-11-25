@@ -3,6 +3,16 @@
   "version": "0.1.0",
   "description": "Lock and unlock any file with AES-256-GCM. Small, automation-friendly CLI.",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sibernaga/baronglock.git"
+  },
+  "homepage": "https://sibernaga.github.io/baronglock/",
+  "bugs": "https://github.com/sibernaga/baronglock/issues",
+  "files": [
+    "src/",
+    "FORMAT.md"
+  ],
   "bin": {
     "baronglock": "./src/cli.js"
   },

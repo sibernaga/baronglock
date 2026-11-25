@@ -4,20 +4,20 @@
 
 **Lock any file so only people with the key can open it.**
 
-BarongLock turns a normal file into a locked file (`.baronglock`). It works with any kind of file: notes, text, CSV, JSON, config files, documents. You can store or send the locked file. Nobody can open it without its key, not even with BarongLock.
+BarongLock turns a normal file into a locked file (`.baronglock`, or the short form `.blj`). It works with any kind of file: notes, text, CSV, JSON, config files, documents. You can store or send the locked file. Nobody can open it without its key, not even with BarongLock.
 
 ## How it works
 
 Think of a padlocked box:
 
-- **The locked file** (`.baronglock`) is the box. Store it or send it anywhere.
+- **The locked file** (`.baronglock` or `.blj`) is the box. Store it or send it anywhere.
 - **The key** is made when you lock the file. It is saved privately on your computer, never inside the locked file.
 - **To unlock**, you need both. On the computer that locked the file, this just works.
 - **If you lose the key, the file is gone for good.** Nobody can recover it. See [Keep your keys safe](#keep-your-keys-safe).
 
 Each locked file gets its own new key.
 
-Got a `.baronglock` file from someone else? You also need its key from them. See [Open the file on another computer](#open-the-file-on-another-computer).
+Got a `.baronglock` or `.blj` file from someone else? You also need its key from them. See [Open the file on another computer](#open-the-file-on-another-computer).
 
 ## Before you start
 
@@ -41,6 +41,12 @@ npx baronglock notes.txt
 - It prints a **Key ID** (a long code). Save it: you need it to open the file on another computer.
 - Your original `notes.txt` is **not** deleted. Delete it yourself if you only want the locked copy.
 
+Prefer the short ending? Add `--ext blj` to get `notes.blj` instead:
+
+```sh
+npx baronglock notes.txt --ext blj
+```
+
 **Tip:** if the file is in another folder, type `npx baronglock ` (with a space) and drag the file into the terminal window. That pastes its full location.
 
 ## Unlock a file
@@ -52,6 +58,7 @@ npx baronglock notes.baronglock --out notes-unlocked.txt
 - `--out` sets the name of the unlocked file. Give it the right ending (`.txt`, `.csv`, …) so your computer knows how to open it.
 - Without `--out`, the contents are shown on screen instead of saved.
 - BarongLock never overwrites a file. If the name is taken, pick another one.
+- `.blj` files unlock the same way: `npx baronglock notes.blj --out notes-unlocked.txt`.
 
 ## Open the file on another computer
 
@@ -140,16 +147,18 @@ To decrypt on another machine, use `key export` / `key import` (steps in [Open t
 ## CLI reference
 
 ```text
-baronglock <input-file> [--out <path>]
-baronglock encrypt <input-file> [--out <path>]
+baronglock <input-file> [--out <path> | --ext <baronglock|blj>]
+baronglock encrypt <input-file> [--out <path> | --ext <baronglock|blj>]
 baronglock decrypt <input-file> [--out <path>]
 baronglock key import <key-file>
 baronglock key export <key-id> --out <key-file>
 ```
 
 - `--out PATH` / `-o PATH`: write to a file. Existing files are not overwritten.
+- `--ext baronglock|blj`: when encrypting without `--out`, pick the locked file's extension. Default `baronglock`. Cannot be combined with `--out`.
+- Both extensions are the same format. Detection uses the `BARONGLOCK` signature in the content, never the file name, so a renamed file still decrypts.
 - Decryption without `--out` writes plaintext bytes to stdout, suitable for pipes.
-- Encryption without `--out` writes `<name>.baronglock` next to the input, dropping the input's last extension (`notes.txt` → `notes.baronglock`, `archive.tar.gz` → `archive.tar.baronglock`, `.env` → `.env.baronglock`). The original extension is not stored in the locked file.
+- Encryption without `--out` writes `<name>.baronglock` (or `<name>.blj` with `--ext blj`) next to the input, dropping the input's last extension (`notes.txt` → `notes.baronglock`, `archive.tar.gz` → `archive.tar.baronglock`, `.env` → `.env.baronglock`). The original extension is not stored in the locked file.
 - For stdin, use `-` as the input path. For example, `cat data.txt | npx baronglock - --out data.baronglock`.
 - Diagnostics go to stderr; decrypted content goes to stdout.
 - `BARONGLOCK_KEY_DIR` overrides the local key-store directory. Set it to a protected directory accessible only to the service account.
@@ -191,7 +200,7 @@ The authenticated additional data (AAD) is the magic signature, version byte, an
 - AES-256-GCM provides confidentiality and integrity when used correctly.
 - Each encryption uses a random key and a random nonce. A key is used for one file in this implementation, which simplifies nonce management.
 - The key ID is not a secret. The key itself is a 32-byte secret and must be protected and backed up.
-- The encrypted file is not self-decrypting. Anyone with only the `.baronglock` file cannot decrypt it.
+- The encrypted file is not self-decrypting. Anyone with only the `.baronglock` / `.blj` file cannot decrypt it.
 - The prototype stores raw keys in local JSON files with restrictive permissions where supported. This is not equivalent to a hardware-backed key store or a centralized secret manager.
 - Anyone who can read a key file can decrypt the corresponding file. Protect key backups and machine accounts.
 - Authentication is verified before plaintext is returned by the crypto layer. The CLI buffers the full plaintext before writing it to stdout.

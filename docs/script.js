@@ -17,9 +17,9 @@ const translations = {
     "cli-note":"Perintah npx tersedia setelah paket dipublikasikan ke npm.","read-docs":"Baca dokumentasi →",
     "format-title":"Format Berkas","format-name":"BarongLock Container",
     "format-text":"Format terenkripsi, berversi, dan memiliki autentikasi untuk mendeteksi perubahan data.",
-    "format-note":"Ekstensi yang digunakan CLI saat ini: .baronglock.","read-spec":"Baca spesifikasi →",
+    "format-note":"Ekstensi: .baronglock atau bentuk singkat .blj. Keduanya format yang sama.","read-spec":"Baca spesifikasi →",
     "download-title":"Mulai Menggunakan","download-text":"Gunakan Node.js dan npm/npx. Tidak perlu menginstal dependensi runtime tambahan.",
-    "view-github":"Lihat Repository GitHub","unlock-title":"Menemukan file .baronglock?",
+    "view-github":"Lihat Repository GitHub","unlock-title":"Menemukan file .baronglock atau .blj?",
     "unlock-text":"Kunjungi repository dan dokumentasi resmi untuk mempelajari cara membukanya. Anda tetap memerlukan kunci yang cocok atau akses ke layanan pengelola kunci yang sah.",
     "unlock-cta":"Cara Membuka File","community-issues":"Diskusi & Isu","copied":"Perintah disalin."
   },
@@ -41,9 +41,9 @@ const translations = {
     "cli-note":"The npx command will work once the package is published to npm.","read-docs":"Read documentation →",
     "format-title":"File Format","format-name":"BarongLock Container",
     "format-text":"A versioned encrypted format with authentication to detect data tampering.",
-    "format-note":"Current CLI file extension: .baronglock.","read-spec":"Read specification →",
+    "format-note":"Extensions: .baronglock or the short form .blj. Both are the same format.","read-spec":"Read specification →",
     "download-title":"Get Started","download-text":"Use Node.js and npm/npx. No extra runtime dependencies are required.",
-    "view-github":"View GitHub Repository","unlock-title":"Found a .baronglock file?",
+    "view-github":"View GitHub Repository","unlock-title":"Found a .baronglock or .blj file?",
     "unlock-text":"Visit the repository and documentation to learn how to open it. You will still need the matching key or authorized access to a key-management service.",
     "unlock-cta":"How to Unlock","community-issues":"Discussions & Issues","copied":"Command copied."
   }

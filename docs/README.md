@@ -65,16 +65,18 @@ Delete temporary exported key files securely according to your operating system 
 ## CLI reference
 
 ```text
-baronglock <input-file> [--out <path>]
-baronglock encrypt <input-file> [--out <path>]
+baronglock <input-file> [--out <path> | --ext <baronglock|blj>]
+baronglock encrypt <input-file> [--out <path> | --ext <baronglock|blj>]
 baronglock decrypt <input-file> [--out <path>]
 baronglock key import <key-file>
 baronglock key export <key-id> --out <key-file>
 ```
 
 - `--out PATH` / `-o PATH`: write to a file. Existing files are not overwritten.
+- `--ext baronglock|blj`: when encrypting without `--out`, pick the locked file's extension. Default `baronglock`. Cannot be combined with `--out`.
+- Both extensions are the same format. Detection uses the `BARONGLOCK` signature in the content, never the file name, so a renamed file still decrypts.
 - Decryption without `--out` writes plaintext bytes to stdout, suitable for pipes.
-- Encryption without `--out` writes `<name>.baronglock` next to the input, dropping the input's last extension (`notes.txt` → `notes.baronglock`, `archive.tar.gz` → `archive.tar.baronglock`, `.env` → `.env.baronglock`). The original extension is not stored in the locked file.
+- Encryption without `--out` writes `<name>.baronglock` (or `<name>.blj` with `--ext blj`) next to the input, dropping the input's last extension (`notes.txt` → `notes.baronglock`, `archive.tar.gz` → `archive.tar.baronglock`, `.env` → `.env.baronglock`). The original extension is not stored in the locked file.
 - For stdin, use `-` as the input path. For example, `cat data.txt | npx baronglock - --out data.baronglock`.
 - Diagnostics go to stderr; decrypted content goes to stdout.
 - `BARONGLOCK_KEY_DIR` overrides the local key-store directory. Set it to a protected directory accessible only to the service account.
