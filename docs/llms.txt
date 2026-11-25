@@ -1,0 +1,67 @@
+# BarongLock
+
+> BarongLock is a small Node.js CLI that locks (encrypts) and unlocks (decrypts) any file with AES-256-GCM. A locked file ends in `.baronglock` or `.blj` and never contains its key. Keys live in a local key store. This page tells AI agents how to run it safely and without prompts.
+
+## Run it non-interactively
+
+- Needs Node.js 20 or newer.
+- Use `npx --yes baronglock ...`. Without `--yes`, the first run waits on an `Ok to proceed? (y)` prompt from npx.
+- In scripts, pin a version: `npx --yes baronglock@0.1.0 ...`.
+- The CLI never prompts. It reads files or stdin and writes files or stdout.
+
+## Commands
+
+Always use the explicit `encrypt` / `decrypt` subcommands. The bare form (`baronglock <file>`) guesses the mode from the content.
+
+```text
+baronglock encrypt <input-file> [--out <path> | --ext <baronglock|blj>]
+baronglock decrypt <input-file> [--out <path>]
+baronglock key import <key-file>
+baronglock key export <key-id> --out <key-file>
+```
+
+- `-` as the input path reads stdin: `cat data.csv | npx --yes baronglock encrypt - --out data.blj`.
+- Without `--out`, `encrypt` writes `<name>.baronglock` next to the input and drops the input's last extension (`notes.txt` -> `notes.baronglock`). `--ext blj` gives `notes.blj`.
+- Without `--out`, `decrypt` writes the plaintext to stdout.
+- `--out` and `--ext` cannot be used together.
+- It never overwrites a file. Every output is created new, with mode 0600 where supported.
+
+## Reading results
+
+- Exit code `0` = success, `1` = failure.
+- Messages go to stderr; decrypted content goes to stdout.
+- Errors are one line on stderr: `baronglock: <message>`.
+- After `encrypt`, stderr has a line `Key ID: <32 hex chars>`. Match it with `^Key ID: ([a-f0-9]{32})$`.
+- The Key ID is not secret. You may show it to the user. The key itself is never printed.
+
+| stderr contains | Meaning | What to do |
+|---|---|---|
+| `EEXIST` | Output file already exists | Pick a new `--out` name. Do not delete the existing file |
+| `Key <id> not found` | This machine has no key for the file | Ask the user to import the key |
+| `unable to authenticate data` | Wrong key, or the file is damaged or changed | Stop and tell the user |
+| `already a BarongLock file` | Input is already locked | Nothing to do |
+| `does not have the BarongLock signature` | `decrypt` was given a plain file | Check the input path |
+| `ENOENT` | Input file not found | Check the path |
+
+## Safety rules for agents
+
+- **Plaintext in stdout enters your context.** Decrypt to stdout only when the user wants you to read the contents. Otherwise use `--out <file>`.
+- **Never read, print, copy or upload key files.** That means anything in the key store (`~/.baronglock/keys/`, or `BARONGLOCK_KEY_DIR`) and any exported key JSON. Anyone with a key file and the locked file can read the data.
+- **Run `key export` only when the user asks for it.** Tell the user to move the exported file safely (not by plain email, not next to the locked file), then delete it.
+- **Never commit key files or unlocked output to Git.** Never put a key file in the same folder, archive or message as its locked file.
+- **Never delete a key** unless the user asks. A lost key means the locked file can never be opened again.
+- **Don't delete the user's original file** after locking it. Ask first.
+- **For tests, set `BARONGLOCK_KEY_DIR`** to a temporary folder, so you don't fill the user's real key store. Files locked during a test can't be unlocked once that folder is deleted.
+
+## Limits
+
+- The whole file is loaded into memory. Avoid very large files.
+- Early version, not independently security-audited.
+- The locked file does not store the original file extension. Choose the unlocked name with `--out`.
+
+## Docs
+
+- [README](https://raw.githubusercontent.com/sibernaga/baronglock/main/README.md): full guide for users and developers
+- [File format v1](https://raw.githubusercontent.com/sibernaga/baronglock/main/FORMAT.md): byte layout of a locked file
+- [npm package](https://www.npmjs.com/package/baronglock)
+- [Source](https://github.com/sibernaga/baronglock)

@@ -1,10 +1,10 @@
 # BarongLock
 
-**Encrypt any file into a `.baronglock` file and decrypt it from the terminal using `npx`.**
+**Encrypt any file into a `.baronglock` (or short `.blj`) file and decrypt it from the terminal using `npx`.**
 
 BarongLock is a small Node.js CLI for automation. It uses Node.js's built-in cryptography—no runtime npm dependencies. The file format is versioned and uses AES-256-GCM authenticated encryption.
 
-> **Important key fact:** A `.baronglock` file does not contain its decryption key. The key is stored separately. To decrypt on another machine, securely transfer/import the matching key or connect BarongLock to a trusted secret manager. `npx` installs the program; it cannot recover a missing secret.
+> **Important key fact:** A `.baronglock` / `.blj` file does not contain its decryption key. The key is stored separately. To decrypt on another machine, securely transfer/import the matching key or connect BarongLock to a trusted secret manager. `npx` installs the program; it cannot recover a missing secret.
 
 ## Quick start
 
@@ -90,6 +90,17 @@ npx baronglock data.baronglock --out restored.txt
 
 The program buffers input in memory in this prototype. Avoid using it with very large files until streaming support has been implemented and tested.
 
+## Using BarongLock from AI agents
+
+AI coding agents can run BarongLock like any other CLI. The agent guide is at [sibernaga.github.io/baronglock/llms.txt](https://sibernaga.github.io/baronglock/llms.txt) ([source](llms.txt)). Point your agent at it. The main rules:
+
+- Run `npx --yes baronglock ...`, so npx doesn't stop at its install prompt.
+- Use the explicit `encrypt` / `decrypt` subcommands.
+- Read the Key ID from the `Key ID: <32 hex chars>` line on stderr. Exit code `0` means success, `1` means failure.
+- Decrypt with `--out <file>` unless the agent needs to read the contents. Plaintext printed to stdout goes into the agent's context.
+- The agent must never read, print or upload key files, and should run `key export` only when you ask.
+- For tests, set `BARONGLOCK_KEY_DIR` to a temporary folder.
+
 ## File format (version 1)
 
 All fields are binary and have fixed lengths except the ciphertext:
@@ -110,7 +121,7 @@ The authenticated additional data (AAD) is the magic signature, version byte, an
 - AES-256-GCM provides confidentiality and integrity when used correctly.
 - Each encryption uses a random key and a random nonce. A key is used for one file in this implementation, which simplifies nonce management.
 - The key ID is not a secret. The key itself is a 32-byte secret and must be protected and backed up.
-- The encrypted file is not self-decrypting. Anyone with only the `.baronglock` file cannot decrypt it.
+- The encrypted file is not self-decrypting. Anyone with only the `.baronglock` / `.blj` file cannot decrypt it.
 - The prototype stores raw keys in local JSON files with restrictive permissions where supported. This is not equivalent to a hardware-backed key store or a centralized secret manager.
 - Anyone who can read a key file can decrypt the corresponding file. Protect key backups and machine accounts.
 - Authentication is verified before plaintext is returned by the crypto layer. The CLI buffers the full plaintext before writing it to stdout.
@@ -120,9 +131,12 @@ The authenticated additional data (AAD) is the magic signature, version byte, an
 
 ## Development
 
+Clone the repository, then run the tests or the CLI straight from source:
+
 ```sh
 npm test
 node src/cli.js --help
+node src/cli.js data.txt
 ```
 
 The project has no third-party runtime dependencies. The CLI uses `node:crypto`, filesystem APIs, and standard Node.js streams.
@@ -144,4 +158,4 @@ Still to do before 1.0:
 - Test on supported Windows, macOS, and Linux versions.
 - Keep the format specification stable and document compatibility changes.
 
-If you found a `.baronglock` file, search for the **BarongLock** repository and follow this README. You will still need the matching key or access to the key service used by whoever created the file.
+If you found a `.baronglock` or `.blj` file, search for the **BarongLock** repository and follow this README. You will still need the matching key or access to the key service used by whoever created the file.

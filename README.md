@@ -180,6 +180,17 @@ npx baronglock data.baronglock --out restored.txt
 
 The program buffers input in memory in this prototype. Avoid using it with very large files until streaming support has been implemented and tested.
 
+## Using BarongLock from AI agents
+
+AI coding agents can run BarongLock like any other CLI. The agent guide is at [sibernaga.github.io/baronglock/llms.txt](https://sibernaga.github.io/baronglock/llms.txt) ([source](docs/llms.txt)). Point your agent at it. The main rules:
+
+- Run `npx --yes baronglock ...`, so npx doesn't stop at its install prompt.
+- Use the explicit `encrypt` / `decrypt` subcommands.
+- Read the Key ID from the `Key ID: <32 hex chars>` line on stderr. Exit code `0` means success, `1` means failure.
+- Decrypt with `--out <file>` unless the agent needs to read the contents. Plaintext printed to stdout goes into the agent's context.
+- The agent must never read, print or upload key files, and should run `key export` only when you ask.
+- For tests, set `BARONGLOCK_KEY_DIR` to a temporary folder.
+
 ## File format (version 1)
 
 All fields are binary and have fixed lengths except the ciphertext:
