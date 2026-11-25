@@ -1,0 +1,17 @@
+{
+  "name": "baronglock",
+  "version": "0.1.0",
+  "description": "Lock and unlock any file with AES-256-GCM. Small, automation-friendly CLI.",
+  "type": "module",
+  "bin": {
+    "baronglock": "./src/cli.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": ["encryption", "file-encryption", "text", "csv", "aes-gcm", "cli", "security"],
+  "license": "MIT"
+}
