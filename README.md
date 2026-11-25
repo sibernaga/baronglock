@@ -220,13 +220,19 @@ node src/cli.js data.txt
 
 The project has no third-party runtime dependencies. The CLI uses `node:crypto`, filesystem APIs, and standard Node.js streams.
 
-## Publishing
+## Releasing
 
-Before publishing:
-1. Pick and verify an available npm package name.
-2. Review the implementation and threat model.
-3. Add end-to-end tests for CLI detection, key import/export, truncated files, malformed headers, and file permissions.
-4. Add streaming support or document a maximum file size.
-5. Test on supported Windows, macOS, and Linux versions.
-6. Publish a versioned release and tag the source repository.
-7. Keep the format specification stable and document compatibility changes.
+BarongLock is published on npm as [`baronglock`](https://www.npmjs.com/package/baronglock). Members of the `sibernaga` npm organisation's `developers` team can publish new versions.
+
+To release a new version:
+1. Run `npm test`.
+2. Run `npm version patch` (or `minor` / `major`). This updates `package.json` and creates a git tag.
+3. Run `git push --follow-tags`.
+4. Run `npm publish` in a normal terminal and approve the 2FA prompt in the browser.
+
+Still to do before 1.0:
+- Review the implementation and threat model.
+- Add end-to-end tests for CLI detection, key import/export, truncated files, malformed headers, and file permissions.
+- Add streaming support or document a maximum file size.
+- Test on supported Windows, macOS, and Linux versions.
+- Keep the format specification stable and document compatibility changes.

@@ -10,8 +10,6 @@ BarongLock is a small Node.js CLI for automation. It uses Node.js's built-in cry
 
 Requirements: Node.js 20 or later and npm/npx.
 
-When published to npm, the intended commands are:
-
 ```sh
 npx baronglock data.txt
 npx baronglock data.txt --out backup.baronglock
@@ -19,13 +17,7 @@ npx baronglock data.baronglock
 npx baronglock data.baronglock --out restored.txt
 ```
 
-The package in this repository is a prototype and is **not published just because this source exists**. Until it is published, clone/download the repository and run:
-
-```sh
-node src/cli.js --help
-node src/cli.js data.txt
-node src/cli.js data.baronglock
-```
+To run from source instead, clone the repository and use `node src/cli.js` in place of `npx baronglock`.
 
 The automatic mode is content-based:
 - Input beginning with the `BARONGLOCK` signature is treated as an encrypted file and decrypted.
@@ -135,15 +127,21 @@ node src/cli.js --help
 
 The project has no third-party runtime dependencies. The CLI uses `node:crypto`, filesystem APIs, and standard Node.js streams.
 
-## Publishing
+## Releasing
 
-Before publishing:
-1. Pick and verify an available npm package name.
-2. Review the implementation and threat model.
-3. Add end-to-end tests for CLI detection, key import/export, truncated files, malformed headers, and file permissions.
-4. Add streaming support or document a maximum file size.
-5. Test on supported Windows, macOS, and Linux versions.
-6. Publish a versioned release and tag the source repository.
-7. Keep the format specification stable and document compatibility changes.
+BarongLock is published on npm as [`baronglock`](https://www.npmjs.com/package/baronglock). Members of the `sibernaga` npm organisation's `developers` team can publish new versions.
+
+To release a new version:
+1. Run `npm test`.
+2. Run `npm version patch` (or `minor` / `major`). This updates `package.json` and creates a git tag.
+3. Run `git push --follow-tags`.
+4. Run `npm publish` in a normal terminal and approve the 2FA prompt in the browser.
+
+Still to do before 1.0:
+- Review the implementation and threat model.
+- Add end-to-end tests for CLI detection, key import/export, truncated files, malformed headers, and file permissions.
+- Add streaming support or document a maximum file size.
+- Test on supported Windows, macOS, and Linux versions.
+- Keep the format specification stable and document compatibility changes.
 
 If you found a `.baronglock` file, search for the **BarongLock** repository and follow this README. You will still need the matching key or access to the key service used by whoever created the file.
