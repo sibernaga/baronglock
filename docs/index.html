@@ -1,98 +1,114 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#082642">
-  <meta name="description" content="BarongLock — format berkas terenkripsi terbuka untuk berkas apa pun: teks, CSV, JSON, dan lainnya. Lintas platform, ramah developer, dan terdokumentasi.">
-  <title>BarongLock — Lindungi Data dengan Standar Terbuka</title>
+  <meta name="description" content="BarongLock — an open encrypted file format for any file: text, CSV, JSON, and more. Cross-platform, developer friendly, and documented.">
+  <title>BarongLock — Protect Your Data with Open Standards</title>
   <link rel="icon" type="image/png" href="assets/baronglock-identity.png">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="site-header">
-    <a class="brand" href="#beranda" aria-label="BarongLock beranda">
+    <a class="brand" href="#beranda" aria-label="BarongLock home">
       <span class="brand-mark"><img src="assets/baronglock-identity.png" alt=""></span>
       <span class="brand-name">Barong<span>Lock</span><sup>®</sup></span>
-      <span class="brand-tagline" data-i18n="tagline">Enkripsi Terbuka<br>untuk Semua Berkas</span>
+      <span class="brand-tagline" data-i18n="tagline">Open Encryption<br>for Any File</span>
     </a>
-    <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-label="Buka navigasi">☰</button>
-    <nav class="main-nav" id="main-nav" aria-label="Navigasi utama">
-      <a class="active" href="#beranda" data-i18n="nav-home">Beranda</a>
-      <a href="#dokumentasi" data-i18n="nav-docs">Dokumentasi</a>
-      <a href="#spesifikasi" data-i18n="nav-spec">Spesifikasi</a>
-      <a href="#unduh" data-i18n="nav-download">Unduh</a>
-      <a href="#komunitas" data-i18n="nav-community">Komunitas</a>
+    <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-label="Open navigation">☰</button>
+    <nav class="main-nav" id="main-nav" aria-label="Main navigation">
+      <a class="active" href="#beranda" data-i18n="nav-home">Home</a>
+      <a href="#dokumentasi" data-i18n="nav-docs">Documentation</a>
+      <a href="#spesifikasi" data-i18n="nav-spec">Specification</a>
+      <a href="#unduh" data-i18n="nav-download">Get Started</a>
+      <a href="#komunitas" data-i18n="nav-community">Community</a>
     </nav>
-    <label class="language-picker">
-      <span class="sr-only">Language / Bahasa</span>
-      <select id="language-select" aria-label="Pilih bahasa">
-        <option value="id">🇮🇩  Bahasa Indonesia</option>
-        <option value="en">🇬🇧  English</option>
-      </select>
-    </label>
+    <div class="lang-switch" role="group" aria-label="Language / Bahasa">
+      <button type="button" class="lang-option" data-lang="en" aria-pressed="true" aria-label="English" title="English">
+        <span>EN</span>
+        <svg class="flag" viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <clipPath id="uk-s"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
+          <clipPath id="uk-t"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
+          <g clip-path="url(#uk-s)">
+            <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
+            <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+            <path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#uk-t)" stroke="#C8102E" stroke-width="4"/>
+            <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
+            <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
+          </g>
+        </svg>
+      </button>
+      <button type="button" class="lang-option" data-lang="id" aria-pressed="false" aria-label="Bahasa Indonesia" title="Bahasa Indonesia">
+        <span>ID</span>
+        <svg class="flag" viewBox="0 0 3 2" aria-hidden="true">
+          <rect width="3" height="1" fill="#E70011"/>
+          <rect y="1" width="3" height="1" fill="#fff"/>
+        </svg>
+      </button>
+    </div>
   </header>
 
   <main>
     <section class="hero" id="beranda">
       <div class="hero-copy">
-        <p class="eyebrow" data-i18n="eyebrow">FORMAT TERBUKA · CLI · LINTAS PLATFORM</p>
-        <h1 data-i18n="hero-title">Lindungi Data Anda<br>dengan <span>Standar Terbuka</span></h1>
-        <p class="hero-description" data-i18n="hero-description">Alat sederhana, aman, dan lintas platform untuk mengenkripsi serta mendekripsi berkas apa pun, seperti teks, CSV, dan JSON, dengan format terbuka, terdokumentasi, dan dirancang untuk otomatisasi.</p>
+        <p class="eyebrow" data-i18n="eyebrow">OPEN FORMAT · CLI · CROSS-PLATFORM</p>
+        <h1 data-i18n="hero-title">Protect Your Data<br>with <span>Open Standards</span></h1>
+        <p class="hero-description" data-i18n="hero-description">A simple, secure, cross-platform tool to encrypt and decrypt any file, such as text, CSV, or JSON, using an open, documented format designed for automation.</p>
         <div class="hero-actions">
-          <a class="button button-primary" href="#unduh"><span aria-hidden="true">↓</span><span data-i18n="download-cta">Lihat Cara Menggunakan</span></a>
-          <a class="button button-secondary" href="#dokumentasi"><span aria-hidden="true">▤</span><span data-i18n="start-cta">Mulai Sekarang</span></a>
+          <a class="button button-primary" href="#unduh"><span aria-hidden="true">↓</span><span data-i18n="download-cta">See How to Use</span></a>
+          <a class="button button-secondary" href="#dokumentasi"><span aria-hidden="true">▤</span><span data-i18n="start-cta">Get Started</span></a>
         </div>
-        <p class="hero-note" data-i18n="hero-note">Catatan: file terenkripsi tidak menyimpan kunci dekripsi. Kunci yang cocok tetap diperlukan.</p>
+        <p class="hero-note" data-i18n="hero-note">Note: encrypted files do not contain their decryption key. The matching key is still required.</p>
       </div>
-      <div class="hero-art" role="img" aria-label="Lanskap Candi Borobudur saat matahari terbit">
+      <div class="hero-art" role="img" aria-label="Borobudur Temple landscape at sunrise">
         <div class="art-caption">BARONGLOCK <span>OPEN FORMAT</span></div>
       </div>
     </section>
 
-    <section class="benefits" aria-label="Keunggulan">
-      <article class="benefit"><span class="feature-icon">◇</span><div><h2 data-i18n="benefit-security">Keamanan Kuat</h2><p data-i18n="benefit-security-text">AES-256-GCM dengan autentikasi integritas</p></div></article>
-      <article class="benefit"><span class="feature-icon">▱</span><div><h2 data-i18n="benefit-open">Terbuka & Transparan</h2><p data-i18n="benefit-open-text">Format berversi dan spesifikasi terdokumentasi</p></div></article>
-      <article class="benefit"><span class="feature-icon">‹/›</span><div><h2 data-i18n="benefit-dev">Ramah Developer</h2><p data-i18n="benefit-dev-text">CLI, pipe standar, dan integrasi skrip</p></div></article>
-      <article class="benefit"><span class="feature-icon">▣</span><div><h2 data-i18n="benefit-platform">Multi-Platform</h2><p data-i18n="benefit-platform-text">Node.js di Windows, macOS, Linux, dan server</p></div></article>
-      <article class="benefit"><span class="feature-icon">✓</span><div><h2 data-i18n="benefit-ready">Berorientasi Keamanan</h2><p data-i18n="benefit-ready-text">Pengujian, versioning, dan panduan keamanan</p></div></article>
+    <section class="benefits" aria-label="Benefits">
+      <article class="benefit"><span class="feature-icon">◇</span><div><h2 data-i18n="benefit-security">Strong Security</h2><p data-i18n="benefit-security-text">AES-256-GCM authenticated encryption</p></div></article>
+      <article class="benefit"><span class="feature-icon">▱</span><div><h2 data-i18n="benefit-open">Open &amp; Transparent</h2><p data-i18n="benefit-open-text">Versioned format and documented specification</p></div></article>
+      <article class="benefit"><span class="feature-icon">‹/›</span><div><h2 data-i18n="benefit-dev">Developer Friendly</h2><p data-i18n="benefit-dev-text">CLI, standard streams, and script integration</p></div></article>
+      <article class="benefit"><span class="feature-icon">▣</span><div><h2 data-i18n="benefit-platform">Cross-Platform</h2><p data-i18n="benefit-platform-text">Node.js on Windows, macOS, Linux, and servers</p></div></article>
+      <article class="benefit"><span class="feature-icon">✓</span><div><h2 data-i18n="benefit-ready">Security Focused</h2><p data-i18n="benefit-ready-text">Tests, versioning, and security guidance</p></div></article>
     </section>
 
     <section class="platform-strip">
-      <h2 data-i18n="platform-title">Dirancang untuk<br>Lingkungan Anda</h2>
+      <h2 data-i18n="platform-title">Designed for<br>Your Environment</h2>
       <div><span class="platform-symbol windows">▦</span><p><b>Windows</b><small>10 / 11</small></p></div>
-      <div><span class="platform-symbol apple">●</span><p><b>macOS</b><small>Intel & Apple Silicon</small></p></div>
+      <div><span class="platform-symbol apple">●</span><p><b>macOS</b><small>Intel &amp; Apple Silicon</small></p></div>
       <div><span class="platform-symbol linux">🐧</span><p><b>Linux</b><small>x86-64 / ARM64</small></p></div>
-      <div><span class="platform-symbol node">JS</span><p><b>Node.js</b><small>v20 atau lebih baru</small></p></div>
+      <div><span class="platform-symbol node">JS</span><p><b>Node.js</b><small data-i18n="platform-node">v20 or newer</small></p></div>
     </section>
 
     <section class="cards-grid">
       <article class="info-card" id="dokumentasi">
-        <div class="card-heading"><span class="card-icon">⌘</span><h2 data-i18n="cli-title">CLI (Baris Perintah)</h2></div>
-        <p data-i18n="cli-intro">Satu perintah untuk mengenkripsi atau mendekripsi berkas.</p>
+        <div class="card-heading"><span class="card-icon">⌘</span><h2 data-i18n="cli-title">Command-Line Interface</h2></div>
+        <p data-i18n="cli-intro">One command to encrypt or decrypt a file.</p>
         <pre><code><span class="prompt">$</span> npx baronglock notes.txt
 <span class="prompt">$</span> npx baronglock notes.baronglock</code></pre>
-        <p class="small-note" data-i18n="cli-note">Tersedia di npm. Butuh Node.js 20 atau lebih baru.</p>
-        <a class="text-link" href="https://github.com/sibernaga/baronglock#readme" data-i18n="read-docs">Baca dokumentasi →</a>
+        <p class="small-note" data-i18n="cli-note">Available on npm. Requires Node.js 20 or newer.</p>
+        <a class="text-link" href="https://github.com/sibernaga/baronglock#readme" data-i18n="read-docs">Read documentation →</a>
       </article>
       <article class="info-card" id="spesifikasi">
-        <div class="card-heading"><span class="card-icon">▤</span><h2 data-i18n="format-title">Format Berkas</h2></div>
-        <div class="format-preview"><div class="extension">.blj</div><div><h3 data-i18n="format-name">BarongLock Container</h3><p data-i18n="format-text">Format terenkripsi, berversi, dan memiliki autentikasi untuk mendeteksi perubahan data.</p></div></div>
-        <p class="small-note" data-i18n="format-note">Ekstensi: .baronglock atau bentuk singkat .blj. Keduanya format yang sama.</p>
-        <a class="text-link" href="https://github.com/sibernaga/baronglock/blob/main/FORMAT.md" data-i18n="read-spec">Baca spesifikasi →</a>
+        <div class="card-heading"><span class="card-icon">▤</span><h2 data-i18n="format-title">File Format</h2></div>
+        <div class="format-preview"><div class="extension">.blj</div><div><h3 data-i18n="format-name">BarongLock Container</h3><p data-i18n="format-text">A versioned encrypted format with authentication to detect data tampering.</p></div></div>
+        <p class="small-note" data-i18n="format-note">Extensions: .baronglock or the short form .blj. Both are the same format.</p>
+        <a class="text-link" href="https://github.com/sibernaga/baronglock/blob/main/FORMAT.md" data-i18n="read-spec">Read specification →</a>
       </article>
       <article class="info-card" id="unduh">
-        <div class="card-heading"><span class="card-icon">↓</span><h2 data-i18n="download-title">Mulai Menggunakan</h2></div>
-        <p data-i18n="download-text">Gunakan Node.js dan npm/npx. Tidak perlu menginstal dependensi runtime tambahan.</p>
-        <div class="code-block"><code>git clone https://github.com/sibernaga/baronglock.git<br>cd baronglock<br>npm test</code><button class="copy-button" data-copy="git clone https://github.com/sibernaga/baronglock.git&#10;cd baronglock&#10;npm test" aria-label="Salin perintah" title="Salin">⧉</button></div>
-        <a class="button button-primary button-small" href="https://github.com/sibernaga/baronglock" target="_blank" rel="noreferrer"><span data-i18n="view-github">Lihat Repository GitHub</span> ↗</a>
+        <div class="card-heading"><span class="card-icon">↓</span><h2 data-i18n="download-title">Get Started</h2></div>
+        <p data-i18n="download-text">Use Node.js and npm/npx. No extra runtime dependencies are required.</p>
+        <div class="code-block"><code>git clone https://github.com/sibernaga/baronglock.git<br>cd baronglock<br>npm test</code><button class="copy-button" data-copy="git clone https://github.com/sibernaga/baronglock.git&#10;cd baronglock&#10;npm test" aria-label="Copy command" title="Copy">⧉</button></div>
+        <a class="button button-primary button-small" href="https://github.com/sibernaga/baronglock" target="_blank" rel="noreferrer"><span data-i18n="view-github">View GitHub Repository</span> ↗</a>
       </article>
     </section>
 
     <section class="unlock-banner">
       <div class="unlock-mark"><img src="assets/baronglock-identity.png" alt=""></div>
-      <div><h2 data-i18n="unlock-title">Menemukan file .baronglock atau .blj?</h2><p data-i18n="unlock-text">Kunjungi repository dan dokumentasi resmi untuk mempelajari cara membukanya. Anda tetap memerlukan kunci yang cocok atau akses ke layanan pengelola kunci yang sah.</p></div>
-      <a class="button button-secondary" href="https://github.com/sibernaga/baronglock#open-the-file-on-another-computer" data-i18n="unlock-cta">Cara Membuka File</a>
+      <div><h2 data-i18n="unlock-title">Found a .baronglock or .blj file?</h2><p data-i18n="unlock-text">Visit the repository and documentation to learn how to open it. You will still need the matching key or authorized access to a key-management service.</p></div>
+      <a class="button button-secondary" href="https://github.com/sibernaga/baronglock#open-the-file-on-another-computer" data-i18n="unlock-cta">How to Unlock</a>
     </section>
   </main>
 
@@ -100,9 +116,9 @@
     <a class="footer-brand" href="#beranda"><img src="assets/baronglock-identity.png" alt=""><b>BarongLock</b></a>
     <span>© <span id="year"></span> BarongLock</span>
     <a href="https://github.com/sibernaga/baronglock" target="_blank" rel="noreferrer">GitHub</a>
-    <a href="https://github.com/sibernaga/baronglock#readme" data-i18n="nav-docs">Dokumentasi</a>
-    <a href="https://github.com/sibernaga/baronglock/blob/main/FORMAT.md" data-i18n="nav-spec">Spesifikasi</a>
-    <a href="https://github.com/sibernaga/baronglock/issues" target="_blank" rel="noreferrer" data-i18n="community-issues">Diskusi & Isu</a>
+    <a href="https://github.com/sibernaga/baronglock#readme" data-i18n="nav-docs">Documentation</a>
+    <a href="https://github.com/sibernaga/baronglock/blob/main/FORMAT.md" data-i18n="nav-spec">Specification</a>
+    <a href="https://github.com/sibernaga/baronglock/issues" target="_blank" rel="noreferrer" data-i18n="community-issues">Discussions &amp; Issues</a>
   </footer>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="script.js"></script>

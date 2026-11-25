@@ -12,7 +12,8 @@ const translations = {
     "benefit-dev":"Ramah Developer","benefit-dev-text":"CLI, pipe standar, dan integrasi skrip",
     "benefit-platform":"Multi-Platform","benefit-platform-text":"Node.js di Windows, macOS, Linux, dan server",
     "benefit-ready":"Berorientasi Keamanan","benefit-ready-text":"Pengujian, versioning, dan panduan keamanan",
-    "platform-title":"Dirancang untuk<br>Lingkungan Anda",
+    "platform-title":"Dirancang untuk<br>Lingkungan Anda","platform-node":"v20 atau lebih baru",
+    "page-title":"BarongLock — Lindungi Data dengan Standar Terbuka",
     "cli-title":"CLI (Baris Perintah)","cli-intro":"Satu perintah untuk mengenkripsi atau mendekripsi berkas.",
     "cli-note":"Tersedia di npm. Butuh Node.js 20 atau lebih baru.","read-docs":"Baca dokumentasi →",
     "format-title":"Format Berkas","format-name":"BarongLock Container",
@@ -36,7 +37,8 @@ const translations = {
     "benefit-dev":"Developer Friendly","benefit-dev-text":"CLI, standard streams, and script integration",
     "benefit-platform":"Cross-Platform","benefit-platform-text":"Node.js on Windows, macOS, Linux, and servers",
     "benefit-ready":"Security Focused","benefit-ready-text":"Tests, versioning, and security guidance",
-    "platform-title":"Designed for<br>Your Environment",
+    "platform-title":"Designed for<br>Your Environment","platform-node":"v20 or newer",
+    "page-title":"BarongLock — Protect Your Data with Open Standards",
     "cli-title":"Command-Line Interface","cli-intro":"One command to encrypt or decrypt a file.",
     "cli-note":"Available on npm. Requires Node.js 20 or newer.","read-docs":"Read documentation →",
     "format-title":"File Format","format-name":"BarongLock Container",
@@ -48,21 +50,31 @@ const translations = {
     "unlock-cta":"How to Unlock","community-issues":"Discussions & Issues","copied":"Command copied."
   }
 };
-const langSelect = document.querySelector("#language-select");
+// English is the default. Only an explicit click is remembered. (The old
+// "baronglock-language" key was saved automatically as "id" for every visitor,
+// so a new key is used to give returning visitors the English default too.)
+const LANG_KEY = "baronglock-lang";
+const langButtons = document.querySelectorAll(".lang-option");
+let currentLang = "en";
 function setLanguage(lang) {
-  const dict = translations[lang] || translations.id;
+  if (!translations[lang]) lang = "en";
+  currentLang = lang;
+  const dict = translations[lang];
   document.documentElement.lang = lang;
+  document.title = dict["page-title"];
   document.querySelectorAll("[data-i18n]").forEach(el => {
     const value = dict[el.dataset.i18n];
     if (value !== undefined) el.innerHTML = value;
   });
-  try { localStorage.setItem("baronglock-language", lang); } catch {}
+  langButtons.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
 }
-let initial = "id";
-try { initial = localStorage.getItem("baronglock-language") || "id"; } catch {}
-langSelect.value = initial;
-setLanguage(initial);
-langSelect.addEventListener("change", () => setLanguage(langSelect.value));
+let saved = null;
+try { saved = localStorage.getItem(LANG_KEY); } catch {}
+if (saved && saved !== "en") setLanguage(saved);
+langButtons.forEach(button => button.addEventListener("click", () => {
+  setLanguage(button.dataset.lang);
+  try { localStorage.setItem(LANG_KEY, currentLang); } catch {}
+}));
 document.querySelector("#year").textContent = new Date().getFullYear();
 
 const menuToggle = document.querySelector("#menu-toggle");
@@ -80,7 +92,7 @@ const toast = document.querySelector("#toast");
 document.querySelectorAll("[data-copy]").forEach(button => button.addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText(button.dataset.copy);
-    toast.textContent = (translations[langSelect.value] || translations.id).copied;
+    toast.textContent = translations[currentLang].copied;
     toast.classList.add("show");
     setTimeout(() => toast.classList.remove("show"), 1800);
   } catch {
