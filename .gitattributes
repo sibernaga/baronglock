@@ -1,0 +1,3 @@
+# Keep LF so the `#!/usr/bin/env node` line in src/cli.js works on macOS/Linux
+# even when the package is published from a Windows checkout.
+*.js text eol=lf
