@@ -1,6 +1,6 @@
 {
   "name": "baronglock",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Lock and unlock any file with AES-256-GCM. Small, automation-friendly CLI.",
   "type": "module",
   "repository": {
