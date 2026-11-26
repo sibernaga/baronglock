@@ -1,10 +1,9 @@
 #!/usr/bin/env node
-import { readFile, writeFile, stat, chmod, unlink } from "node:fs/promises";
-import { basename, resolve, parse, join } from "node:path";
+import { readFile, writeFile, chmod, unlink } from "node:fs/promises";
+import { parse, join } from "node:path";
 import { stdin, stdout, stderr } from "node:process";
-import { MAGIC, parseEnvelope } from "./format.js";
-import { encrypt, decrypt } from "./crypto.js";
-import { createKey, saveKey, loadKey, keyIdHex, importKeyFile, exportKeyFile, defaultKeyDir } from "./key-store.js";
+import { isLocked as hasMagic, lock, unlock } from "./index.js";
+import { importKeyFile, exportKeyFile, defaultKeyDir } from "./key-store.js";
 
 function usage() {
   return `BarongLock — lock and unlock any file
@@ -66,9 +65,6 @@ function lockedName(inputPath, ext = "baronglock") {
   const { dir, name } = parse(inputPath);
   return join(dir, `${name}.${ext}`);
 }
-function hasMagic(data) {
-  return data.length >= MAGIC.length && data.subarray(0, MAGIC.length).equals(MAGIC);
-}
 async function runFile(inputPath, explicitMode, outputPath, ext) {
   const input = await readInput(inputPath);
   const isLocked = hasMagic(input);
@@ -76,20 +72,13 @@ async function runFile(inputPath, explicitMode, outputPath, ext) {
   if (mode === "decrypt") {
     if (ext) throw new Error("--ext only applies when locking a file. Use --out to name the unlocked file.");
     if (!isLocked) throw new Error("Input does not have the BarongLock signature; refusing to decrypt.");
-    const parsed = parseEnvelope(input);
-    const keyId = keyIdHex(parsed.keyId);
-    const key = await loadKey(keyId);
-    const plaintext = decrypt(input, key);
+    const plaintext = await unlock(input);
     const out = outputPath ?? (inputPath === "-" ? "-" : null);
     if (out === null) await writeOutput("-", plaintext);
     else await writeOutput(out, plaintext);
     if (out !== "-" && out !== null) stderr.write(`Decrypted to ${out}\n`);
   } else {
-    if (isLocked) throw new Error("Input is already a BarongLock file; refusing to encrypt it again.");
-    const key = await createKey();
-    const { envelope, keyId } = encrypt(input, key);
-    const id = keyIdHex(keyId);
-    const keyFile = await saveKey(id, key);
+    const { locked: envelope, keyId: id, keyFile } = await lock(input);
     const defaultOut = inputPath === "-" ? "-" : lockedName(inputPath, ext ?? undefined);
     const out = outputPath ?? defaultOut;
     try {

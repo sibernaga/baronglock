@@ -191,6 +191,25 @@ AI coding agents can run BarongLock like any other CLI. The agent guide is at [s
 - The agent must never read, print or upload key files, and should run `key export` only when you ask.
 - For tests, set `BARONGLOCK_KEY_DIR` to a temporary folder.
 
+## Using BarongLock as a library
+
+Editor integrations and scripts can lock and unlock bytes in memory. They use the same key store as the CLI.
+
+```js
+import { lock, unlock, relock, isLocked, keyIdOf } from "baronglock";
+
+const { locked, keyId } = await lock(Buffer.from("a,b\n1,2\n"));
+const plaintext = await unlock(locked);
+const updated = await relock(locked, Buffer.from("a,b\n3,4\n")); // same key, new nonce
+```
+
+- Inputs can be `Buffer` or `Uint8Array`. Outputs are `Buffer`.
+- Every function takes an optional `{ keyDir }`. The default is `BARONGLOCK_KEY_DIR`, or `~/.baronglock/keys`.
+- `lock` saves a new key and also returns its `keyFile`. If you then fail to store `locked`, delete `keyFile`.
+- `relock` is for saving edits. It checks that the old file opens with its key, then locks the new contents with that same key, so people who imported the key can still open it.
+- `lock` and `relock` refuse contents that are already locked.
+- TypeScript types are included.
+
 ## File format (version 1)
 
 All fields are binary and have fixed lengths except the ciphertext:
@@ -209,7 +228,7 @@ The authenticated additional data (AAD) is the magic signature, version byte, an
 ## Security notes and limitations
 
 - AES-256-GCM provides confidentiality and integrity when used correctly.
-- Each encryption uses a random key and a random nonce. A key is used for one file in this implementation, which simplifies nonce management.
+- Each file gets its own random key, and every encryption uses a fresh random nonce. Saving edits with `relock` reuses the file's key with a new nonce. AES-GCM allows that for far more saves than any file will see.
 - The key ID is not a secret. The key itself is a 32-byte secret and must be protected and backed up.
 - The encrypted file is not self-decrypting. Anyone with only the `.baronglock` / `.blj` file cannot decrypt it.
 - The prototype stores raw keys in local JSON files with restrictive permissions where supported. This is not equivalent to a hardware-backed key store or a centralized secret manager.

@@ -13,6 +13,13 @@
     "src/",
     "FORMAT.md"
   ],
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "bin": {
     "baronglock": "src/cli.js"
   },
