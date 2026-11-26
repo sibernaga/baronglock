@@ -6,3 +6,38 @@
 @media(max-width:520px){.site-header{padding:0 13px;gap:8px}.brand{gap:7px}.brand-mark{width:39px;height:42px;border-radius:10px}.brand-mark img{width:31px;height:31px}.brand-name{font-size:20px;letter-spacing:-.7px}.lang-option{padding:6px;gap:5px}.lang-option .flag{width:18px;height:12px}.hero{min-height:440px}.hero-copy{width:100%;padding:32px 19px}.hero h1{font-size:36px;letter-spacing:-1.4px}.hero-description{font-size:15px}.hero-actions{gap:9px}.button{padding:0 14px;min-height:45px;font-size:12px}.benefits{padding:20px 18px;gap:18px 12px}.benefit{align-items:flex-start}.feature-icon{font-size:24px;min-width:25px}.benefit h2{font-size:11px}.benefit p{font-size:10px}.platform-strip,.cards-grid,.unlock-banner{margin-left:14px;margin-right:14px}.platform-strip{padding:15px;grid-template-columns:1fr 1fr}.platform-strip h2{font-size:17px}.platform-strip>div{gap:8px}.platform-strip p{font-size:11px}.platform-strip small{font-size:10px}.cards-grid{margin-bottom:17px}.info-card{padding:18px}.card-heading h2{font-size:16px}.format-preview{align-items:flex-start}.extension{font-size:21px;padding:10px}.unlock-banner{padding:16px;gap:12px}.unlock-mark{width:44px;height:44px}.unlock-banner h2{font-size:14px}.unlock-banner p{font-size:11px}.unlock-banner .button{margin-left:56px}footer{font-size:11px}}
 
 @media(max-width:400px){.lang-option span{display:none}}
+
+/* VS Code extension section */
+.editor-band{margin:0 clamp(20px,3.8vw,68px) 25px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(22px,3vw,48px);align-items:center;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);color:#e8f2fc;border-radius:17px;padding:clamp(22px,3vw,40px);scroll-margin-top:100px}
+.editor-band .eyebrow{color:#7ed9ff}
+.editor-copy h2{font-size:clamp(24px,2.2vw,34px);line-height:1.15;letter-spacing:-1px;margin:0 0 12px;color:#fff;font-weight:800}
+.editor-copy h2 span{color:#27b6f4}
+.editor-copy{min-width:0}.editor-text{font-size:14px;line-height:1.55;margin:0 0 14px;color:#cfe0f0;max-width:560px}
+.editor-points{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:7px}
+.editor-points li{font-size:13px;padding-left:22px;position:relative}
+.editor-points li:before{content:"✓";position:absolute;left:0;color:#27b6f4;font-weight:800}
+.editor-band .code-block{background:#06203a;border-color:#1d4570;color:#e8f2fc;white-space:nowrap}
+.editor-band .copy-button{background:var(--navy-2);border-color:#2f5d88;color:#e8f2fc}
+.editor-actions{display:flex;gap:10px;flex-wrap:wrap}
+.editor-band .button-secondary{background:transparent;border-color:#5f86ad;color:#fff}
+.editor-mock{background:#1e1e1e;border:1px solid #2b2b2b;border-radius:12px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.35);color:#d4d4d4;font-family:Inter,system-ui,sans-serif;font-size:12px}
+.mock-titlebar{display:flex;align-items:center;gap:6px;background:#323233;padding:8px 12px;color:#ccc;font-size:11px}
+.mock-titlebar i{width:10px;height:10px;border-radius:50%;background:#ff5f57}
+.mock-titlebar i:nth-child(2){background:#febc2e}
+.mock-titlebar i:nth-child(3){background:#28c840}
+.mock-titlebar span{flex:1;text-align:center;margin-right:42px}
+.mock-body{display:grid;grid-template-columns:40% 1fr;min-height:210px}
+.mock-sidebar{background:#252526;padding:10px 0}
+.mock-sidebar p{margin:0;padding:4px 14px;white-space:nowrap;position:relative}
+.mock-heading{font-size:10px;letter-spacing:1px;color:#bbb;font-weight:700}
+.mock-file:before{content:"▤";display:inline-block;width:18px;color:#8a8a8a}
+.mock-file.locked:before{content:"🔒";font-size:10px}
+.mock-file.active{background:#04395e;color:#fff}
+.mock-menu{position:absolute;left:56%;top:1px;background:#0060c0;color:#fff;border:1px solid #454545;border-radius:5px;padding:4px 12px;box-shadow:0 6px 16px rgba(0,0,0,.5);font-size:11px;z-index:1}
+.mock-editor{min-width:0;background:linear-gradient(#2d2d2d 0 30px,#1e1e1e 30px)}
+.mock-tab{width:fit-content;height:30px;display:flex;align-items:center;background:#1e1e1e;border-top:2px solid #0078d4;padding:0 14px;color:#fff;font-size:11px}
+.mock-editor pre{margin:0;padding:10px 12px;line-height:1.75;color:#ce9178;overflow:hidden;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
+.mock-editor pre span{display:inline-block;width:16px;margin-right:12px;text-align:right;color:#858585}
+.mock-status{display:flex;justify-content:flex-end;gap:18px;background:#007acc;color:#fff;padding:3px 12px;font-size:10.5px}
+@media(max-width:900px){.editor-band{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:520px){.editor-band{margin-left:14px;margin-right:14px;padding:18px}.mock-body{grid-template-columns:1fr}.mock-sidebar{display:none}.editor-band .code-block code{font-size:10px}}
