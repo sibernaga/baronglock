@@ -4,7 +4,7 @@
 
 **Lock any file so only people with the key can open it.**
 
-BarongLock turns a normal file into a locked file (`.baronglock`, or the short form `.blj`). It works with any kind of file: notes, text, CSV, JSON, config files, documents. You can store or send the locked file. Nobody can open it without its key, not even with BarongLock.
+BarongLock turns a normal file into a locked file (`.baronglock`, or the short form `.blj`). It works with any kind of file: notes, text, CSV, JSON, config files, documents. You can store or send the locked file. Nobody can open it without its key (or its password, if you chose one), not even with BarongLock.
 
 ## How it works
 
@@ -16,6 +16,8 @@ Think of a padlocked box:
 - **If you lose the key, the file is gone for good.** Nobody can recover it. See [Keep your keys safe](#keep-your-keys-safe).
 
 Each locked file gets its own new key.
+
+**Or use a password.** Lock a file with a password instead, and type it to open the file on any computer. See [Lock with a password](#lock-with-a-password).
 
 Got a `.baronglock` or `.blj` file from someone else? You also need its key from them. See [Open the file on another computer](#open-the-file-on-another-computer).
 
@@ -88,6 +90,21 @@ The other computer needs the key too. Copy it over like this:
 
 Lost the Key ID? Try to unlock the file on the other computer. The error message shows the Key ID it needs.
 
+## Lock with a password
+
+Rather use a password than a key? Add `--password` when you lock:
+
+```sh
+npx baronglock notes.txt --password
+```
+
+- Type the password, then type it again. Nothing shows on screen while you type.
+- To open the file, unlock it as usual. BarongLock sees it needs a password and asks for it.
+- It works on any computer. There is no key to copy.
+- **If you forget the password, the file is gone for good.** Nobody can recover it.
+- Use a long password, such as four or five random words. Anyone who has the file can keep guessing passwords.
+- Send the password separately from the file, never in the same message.
+
 ## Keep your keys safe
 
 - Keys are saved in a hidden folder:
@@ -107,6 +124,9 @@ Lost the Key ID? Try to unlock the file on the other computer. The error message
 | `EEXIST: file already exists` | A file with that name is already there | Pick a different name with `--out` |
 | `unable to authenticate data` | Wrong key, or the locked file is damaged or changed | Get the right key or a fresh copy of the file |
 | `already a BarongLock file` | The file is already locked | Nothing to do |
+| `Wrong password` | Wrong password, or the file is damaged or changed | Check the password and Caps Lock, or get a fresh copy of the file |
+| `needs a password` | The file has a password, but there's no terminal to type it in | Run it in a terminal, or set `BARONGLOCK_PASSWORD` |
+| `at least 8 characters` | The new password is too short | Use a longer password |
 
 ## Good to know
 
@@ -147,8 +167,8 @@ To decrypt on another machine, use `key export` / `key import` (steps in [Open t
 ## CLI reference
 
 ```text
-baronglock <input-file> [--out <path> | --ext <baronglock|blj>]
-baronglock encrypt <input-file> [--out <path> | --ext <baronglock|blj>]
+baronglock <input-file> [--out <path> | --ext <baronglock|blj>] [--password]
+baronglock encrypt <input-file> [--out <path> | --ext <baronglock|blj>] [--password]
 baronglock decrypt <input-file> [--out <path>]
 baronglock key import <key-file>
 baronglock key export <key-id> --out <key-file>
@@ -156,12 +176,16 @@ baronglock key export <key-id> --out <key-file>
 
 - `--out PATH` / `-o PATH`: write to a file. Existing files are not overwritten.
 - `--ext baronglock|blj`: when encrypting without `--out`, pick the locked file's extension. Default `baronglock`. Cannot be combined with `--out`.
+- `--password`: when encrypting, lock with a password instead of a new stored key. At least 8 characters. The password comes from `BARONGLOCK_PASSWORD`, or is typed twice at a hidden prompt. It is never a command-line argument, which would end up in shell history.
+- Decrypting a password file asks for the password the same way. No flag is needed: the file says it needs one.
+- Password files print no Key ID and create no key file.
 - Both extensions are the same format. Detection uses the `BARONGLOCK` signature in the content, never the file name, so a renamed file still decrypts.
 - Decryption without `--out` writes plaintext bytes to stdout, suitable for pipes.
 - Encryption without `--out` writes `<name>.baronglock` (or `<name>.blj` with `--ext blj`) next to the input, dropping the input's last extension (`notes.txt` → `notes.baronglock`, `archive.tar.gz` → `archive.tar.baronglock`, `.env` → `.env.baronglock`). The original extension is not stored in the locked file.
 - For stdin, use `-` as the input path. For example, `cat data.txt | npx baronglock - --out data.baronglock`.
 - Diagnostics go to stderr; decrypted content goes to stdout.
 - `BARONGLOCK_KEY_DIR` overrides the local key-store directory. Set it to a protected directory accessible only to the service account.
+- `BARONGLOCK_PASSWORD` gives the password without a prompt, for scripts. Anything that can read the process's environment can read it.
 
 ## Piping into tools
 
@@ -190,17 +214,22 @@ AI coding agents can run BarongLock like any other CLI. The agent guide is at [s
 - Decrypt with `--out <file>` unless the agent needs to read the contents. Plaintext printed to stdout goes into the agent's context.
 - The agent must never read, print or upload key files, and should run `key export` only when you ask.
 - For tests, set `BARONGLOCK_KEY_DIR` to a temporary folder.
+- For password files, the agent must never guess or make up a password. It asks you, then passes it through `BARONGLOCK_PASSWORD`, never as an argument.
 
 ## Using BarongLock as a library
 
 Editor integrations and scripts can lock and unlock bytes in memory. They use the same key store as the CLI.
 
 ```js
-import { lock, unlock, relock, isLocked, keyIdOf } from "baronglock";
+import { lock, unlock, relock, isLocked, usesPassword, keyIdOf } from "baronglock";
 
 const { locked, keyId } = await lock(Buffer.from("a,b\n1,2\n"));
 const plaintext = await unlock(locked);
 const updated = await relock(locked, Buffer.from("a,b\n3,4\n")); // same key, new nonce
+
+// Password files: pass the same { password } to lock, unlock and relock.
+const secret = (await lock(Buffer.from("x"), { password: "a long passphrase" })).locked;
+const text = await unlock(secret, { password: "a long passphrase" });
 ```
 
 - Inputs can be `Buffer` or `Uint8Array`. Outputs are `Buffer`.
@@ -208,11 +237,15 @@ const updated = await relock(locked, Buffer.from("a,b\n3,4\n")); // same key, ne
 - `lock` saves a new key and also returns its `keyFile`. If you then fail to store `locked`, delete `keyFile`.
 - `relock` is for saving edits. It checks that the old file opens with its key, then locks the new contents with that same key, so people who imported the key can still open it.
 - `lock` and `relock` refuse contents that are already locked.
+- `usesPassword(locked)` tells which kind a file is. `keyIdOf` returns `null` for password files.
+- Password errors carry a `code`: `BARONGLOCK_PASSWORD_REQUIRED` or `BARONGLOCK_WRONG_PASSWORD`.
 - TypeScript types are included.
 
-## File format (version 1)
+## File format
 
-All fields are binary and have fixed lengths except the ciphertext:
+There are two versions, and the version byte says which. The full specification is in [FORMAT.md](FORMAT.md). All fields are binary and have fixed lengths except the ciphertext.
+
+Version 1, stored key:
 
 | Field | Size | Purpose |
 |---|---:|---|
@@ -223,12 +256,27 @@ All fields are binary and have fixed lengths except the ciphertext:
 | Authentication tag | 16 bytes | Verifies ciphertext and authenticated header |
 | Ciphertext | Remaining bytes | Encrypted original input bytes |
 
-The authenticated additional data (AAD) is the magic signature, version byte, and key ID. The nonce, tag, and ciphertext are passed to AES-256-GCM. Input bytes are preserved as-is; this tool does not parse or normalize the input, so any file (text, CSV, JSON, binary) round-trips byte-for-byte, with no encoding or line-ending changes.
+Version 2, password:
+
+| Field | Size | Purpose |
+|---|---:|---|
+| Magic signature `BARONGLOCK` | 10 bytes | File detection |
+| Version | 1 byte | Format version (`2`) |
+| Password method | 1 byte | `1` = scrypt |
+| scrypt settings | 3 bytes | log2(N), r, p. New files use 17, 8, 1 |
+| Salt | 16 bytes | Random, per file |
+| Nonce | 12 bytes | AES-GCM nonce |
+| Authentication tag | 16 bytes | Verifies ciphertext and authenticated header |
+| Ciphertext | Remaining bytes | Encrypted original input bytes |
+
+The authenticated additional data (AAD) is everything before the nonce: in version 1 the magic signature, version byte and key ID; in version 2 also the password method, scrypt settings and salt. The nonce, tag, and ciphertext are passed to AES-256-GCM. Input bytes are preserved as-is; this tool does not parse or normalize the input, so any file (text, CSV, JSON, binary) round-trips byte-for-byte, with no encoding or line-ending changes.
 
 ## Security notes and limitations
 
 - AES-256-GCM provides confidentiality and integrity when used correctly.
-- Each file gets its own random key, and every encryption uses a fresh random nonce. Saving edits with `relock` reuses the file's key with a new nonce. AES-GCM allows that for far more saves than any file will see.
+- Each file gets its own random key (or, for a password file, a key made from the password and a random salt), and every encryption uses a fresh random nonce. Saving edits with `relock` reuses the file's key with a new nonce. AES-GCM allows that for far more saves than any file will see.
+- A password file is only as strong as its password. Anyone with the file can try passwords offline. scrypt makes each try slow (about 128 MiB of memory and a fraction of a second), but a short or common password will still be found. Use a long passphrase.
+- A forgotten password can't be recovered or reset.
 - The key ID is not a secret. The key itself is a 32-byte secret and must be protected and backed up.
 - The encrypted file is not self-decrypting. Anyone with only the `.baronglock` / `.blj` file cannot decrypt it.
 - The prototype stores raw keys in local JSON files with restrictive permissions where supported. This is not equivalent to a hardware-backed key store or a centralized secret manager.

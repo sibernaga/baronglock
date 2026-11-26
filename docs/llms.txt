@@ -1,6 +1,6 @@
 # BarongLock
 
-> BarongLock is a small Node.js CLI that locks (encrypts) and unlocks (decrypts) any file with AES-256-GCM. A locked file ends in `.baronglock` or `.blj` and never contains its key. Keys live in a local key store. This page tells AI agents how to run it safely and without prompts.
+> BarongLock is a small Node.js CLI that locks (encrypts) and unlocks (decrypts) any file with AES-256-GCM. A locked file ends in `.baronglock` or `.blj` and never contains its key. Keys live in a local key store, or the file is locked with a password. This page tells AI agents how to run it safely and without prompts.
 
 ## Run it non-interactively
 
@@ -14,7 +14,7 @@
 Always use the explicit `encrypt` / `decrypt` subcommands. The bare form (`baronglock <file>`) guesses the mode from the content.
 
 ```text
-baronglock encrypt <input-file> [--out <path> | --ext <baronglock|blj>]
+baronglock encrypt <input-file> [--out <path> | --ext <baronglock|blj>] [--password]
 baronglock decrypt <input-file> [--out <path>]
 baronglock key import <key-file>
 baronglock key export <key-id> --out <key-file>
@@ -25,6 +25,14 @@ baronglock key export <key-id> --out <key-file>
 - Without `--out`, `decrypt` writes the plaintext to stdout.
 - `--out` and `--ext` cannot be used together.
 - It never overwrites a file. Every output is created new, with mode 0600 where supported.
+
+## Password files
+
+- `encrypt --password` locks with a password instead of a stored key. Decrypting a password file needs the same password. No flag is needed: the file says it needs one.
+- Give the password in the `BARONGLOCK_PASSWORD` environment variable. Without it, the CLI asks at a hidden terminal prompt, which an agent can't answer: it fails with `needs a password`.
+- `--password` takes no value. Never put a password on the command line, where it ends up in shell history and process lists.
+- Password files print no `Key ID` line and create no key file.
+- New passwords need at least 8 characters.
 
 ## Reading results
 
@@ -42,10 +50,13 @@ baronglock key export <key-id> --out <key-file>
 | `already a BarongLock file` | Input is already locked | Nothing to do |
 | `does not have the BarongLock signature` | `decrypt` was given a plain file | Check the input path |
 | `ENOENT` | Input file not found | Check the path |
+| `needs a password` | Password file, and `BARONGLOCK_PASSWORD` is not set | Ask the user for the password |
+| `Wrong password` | Wrong password, or the file was changed | Tell the user. Do not try other passwords |
 
 ## Safety rules for agents
 
 - **Plaintext in stdout enters your context.** Decrypt to stdout only when the user wants you to read the contents. Otherwise use `--out <file>`.
+- **Never guess, make up or try out passwords.** Ask the user. Lock with a password only when the user asks for one, and let the user choose it. Never write a password into a file, a commit or a message.
 - **Never read, print, copy or upload key files.** That means anything in the key store (`~/.baronglock/keys/`, or `BARONGLOCK_KEY_DIR`) and any exported key JSON. Anyone with a key file and the locked file can read the data.
 - **Run `key export` only when the user asks for it.** Tell the user to move the exported file safely (not by plain email, not next to the locked file), then delete it.
 - **Never commit key files or unlocked output to Git.** Never put a key file in the same folder, archive or message as its locked file.
